@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="@string/my_doctors"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:textStyle="bold" />
 

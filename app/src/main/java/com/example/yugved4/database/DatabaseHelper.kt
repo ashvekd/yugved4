@@ -21,7 +21,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
     companion object {
         private const val DATABASE_NAME = "yugved.db"
-        private const val DATABASE_VERSION = 10  // Incremented for firebase_uid column
+        private const val DATABASE_VERSION = 11  // Incremented for daily_moods and peace_quotes tables
         
         // Doctors table and columns
         private const val TABLE_DOCTORS = "doctors"
@@ -105,6 +105,16 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         private const val TABLE_DAILY_STEPS = "daily_steps"
         private const val COLUMN_STEP_DATE = "date"
         private const val COLUMN_STEP_COUNT = "step_count"
+        
+        // Daily moods table and columns
+        private const val TABLE_DAILY_MOODS = "daily_moods"
+        private const val COLUMN_MOOD_DATE = "date"
+        private const val COLUMN_MOOD_SCORE = "mood_score"
+        
+        // Peace quotes table and columns
+        private const val TABLE_PEACE_QUOTES = "peace_quotes"
+        private const val COLUMN_QUOTE_ID = "id"
+        private const val COLUMN_QUOTE_TEXT = "quote_text"
     }
 
     /**
@@ -251,6 +261,27 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             )
         """.trimIndent()
         db.execSQL(createDailyStepsTable)
+        
+        // Create daily moods table
+        val createDailyMoodsTable = """
+            CREATE TABLE $TABLE_DAILY_MOODS (
+                $COLUMN_MOOD_DATE TEXT PRIMARY KEY,
+                $COLUMN_MOOD_SCORE INTEGER NOT NULL
+            )
+        """.trimIndent()
+        db.execSQL(createDailyMoodsTable)
+        
+        // Create peace quotes table
+        val createPeaceQuotesTable = """
+            CREATE TABLE $TABLE_PEACE_QUOTES (
+                $COLUMN_QUOTE_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_QUOTE_TEXT TEXT NOT NULL
+            )
+        """.trimIndent()
+        db.execSQL(createPeaceQuotesTable)
+        
+        // Insert seed data for peace quotes
+        insertPeaceQuotesSeedData(db)
     }
 
     /**
@@ -267,6 +298,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.execSQL("DROP TABLE IF EXISTS $TABLE_MEAL_PLANS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_APP_SETTINGS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_DAILY_STEPS")
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_DAILY_MOODS")
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_PEACE_QUOTES")
         onCreate(db)
     }
 
@@ -914,6 +947,91 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val number: String,
         val description: String
     )
+    
+    // =============== DAILY MOODS \u0026 PEACE QUOTES METHODS ===============
+    
+    /**
+     * Insert seed data for peace quotes
+     * This method is called during database creation
+     */
+    private fun insertPeaceQuotesSeedData(db: SQLiteDatabase) {
+        val quotes = listOf(
+            "Peace comes from within. Do not seek it without.",
+            "The mind is everything. What you think you become.",
+            "Be kind whenever possible. It is always possible.",
+            "Every day may not be good, but there is something good in every day.",
+            "Your mental health is a priority. Your happiness is essential. Your self-care is a necessity.",
+            "You are stronger than you think. More capable than you know.",
+            "Healing takes time, and asking for help is a courageous step.",
+            "Small steps in the right direction can turn out to be the biggest step of your life.",
+            "You don't have to be positive all the time. It's perfectly okay to feel sad, angry, or frustrated.",
+            "Taking care of yourself doesn't mean me first, it means me too.",
+            "Your present circumstances don't determine where you go; they merely determine where you start.",
+            "Be gentle with yourself. You're doing the best you can."
+        )
+        
+        for (quote in quotes) {
+            db.execSQL("""
+                INSERT INTO $TABLE_PEACE_QUOTES ($COLUMN_QUOTE_TEXT) 
+                VALUES (?)
+            """, arrayOf(quote))
+        }
+    }
+    
+    /**
+     * Save daily mood score (1-5) for current date
+     * Uses INSERT OR REPLACE to update if mood already exists for today
+     * @param score Mood score from 1 (worst) to 5 (best)
+     * @return true if successful, false otherwise
+     */
+    fun saveDailyMood(score: Int): Boolean {
+        if (score !in 1..5) {
+            return false
+        }
+        
+        val db = writableDatabase
+        
+        // Get current date in yyyy-MM-dd format
+        val currentDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+            .format(java.util.Date())
+        
+        val values = ContentValues().apply {
+            put(COLUMN_MOOD_DATE, currentDate)
+            put(COLUMN_MOOD_SCORE, score)
+        }
+        
+        // INSERT OR REPLACE will update if date already exists
+        val result = db.insertWithOnConflict(
+            TABLE_DAILY_MOODS,
+            null,
+            values,
+            SQLiteDatabase.CONFLICT_REPLACE
+        )
+        
+        db.close()
+        return result != -1L
+    }
+    
+    /**
+     * Get a random peace quote from database
+     * @return Random quote string, or default message if no quotes available
+     */
+    fun getRandomQuote(): String {
+        val db = readableDatabase
+        var quote = "Take a deep breath. You are doing great."
+        
+        db.rawQuery(
+            "SELECT $COLUMN_QUOTE_TEXT FROM $TABLE_PEACE_QUOTES ORDER BY RANDOM() LIMIT 1",
+            null
+        ).use { cursor ->
+            if (cursor.moveToFirst()) {
+                quote = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_QUOTE_TEXT))
+            }
+        }
+        
+        db.close()
+        return quote
+    }
     
     // =============== MUSCLE GROUPS & GYM EXERCISES METHODS ===============
     
