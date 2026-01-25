@@ -136,5 +136,8 @@
     <string name="doctor_added">Doctor added successfully</string>
     <string name="doctor_deleted">Doctor deleted</string>
     <string name="whatsapp_not_installed">WhatsApp is not installed</string>
+    
+    <!-- Firebase Google Sign-In -->
+    <string name="default_web_client_id">376941458006-ip95ok7cgkiu382ktnd1keg9040t4pvg.apps.googleusercontent.com</string>
 
 </resources>

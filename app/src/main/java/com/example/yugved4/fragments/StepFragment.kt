@@ -15,8 +15,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.yugved4.R
 import com.example.yugved4.database.DatabaseHelper
 import com.example.yugved4.databinding.FragmentStepBinding
+import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -31,6 +35,7 @@ class StepFragment : Fragment(), SensorEventListener {
     private val binding get() = _binding!!
 
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var auth: FirebaseAuth
     private var sensorManager: SensorManager? = null
     private var stepCounterSensor: Sensor? = null
     
@@ -69,12 +74,14 @@ class StepFragment : Fragment(), SensorEventListener {
         super.onViewCreated(view, savedInstanceState)
 
         dbHelper = DatabaseHelper(requireContext())
+        auth = FirebaseAuth.getInstance()
         sensorManager = requireContext().getSystemService(android.content.Context.SENSOR_SERVICE) as? SensorManager
         stepCounterSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         
         checkSensorAvailability()
         loadSavedState()
         setupToggleButton()
+        setupProfileButton()
     }
     
     private fun checkSensorAvailability() {
@@ -83,7 +90,14 @@ class StepFragment : Fragment(), SensorEventListener {
             binding.tvStatus.text = "Step counter not available on this device"
             Toast.makeText(
                 requireContext(),
-                "Step counter sensor not available",
+                "⚠️ NO STEP SENSOR! Are you on an emulator? Use a real phone!",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            // Sensor exists
+            Toast.makeText(
+                requireContext(),
+                "✅ Step counter sensor detected!",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -117,6 +131,31 @@ class StepFragment : Fragment(), SensorEventListener {
                 // Turning OFF
                 stopTracking()
             }
+        }
+    }
+    
+    /**
+     * Setup profile button with click listener and load Google photo
+     */
+    private fun setupProfileButton() {
+        // Load Google profile photo into button
+        val currentUser = auth.currentUser
+        val photoUrl = currentUser?.photoUrl
+        
+        if (photoUrl != null) {
+            Glide.with(this)
+                .load(photoUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .circleCrop()
+                .into(binding.btnProfile)
+        }
+        
+        // Set click listener to show profile bottom sheet
+        binding.btnProfile.setOnClickListener {
+            val profileBottomSheet = ProfileBottomSheet()
+            profileBottomSheet.show(parentFragmentManager, "ProfileBottomSheet")
         }
     }
     
@@ -202,10 +241,16 @@ class StepFragment : Fragment(), SensorEventListener {
             if (it.sensor.type == Sensor.TYPE_STEP_COUNTER) {
                 val totalStepsSinceBoot = it.values[0].toInt()
                 
+                // DEBUG: Show sensor is working
+                Toast.makeText(requireContext(), "Sensor fired! Total since boot: $totalStepsSinceBoot", Toast.LENGTH_SHORT).show()
+                
                 if (isFirstReading) {
                     val savedSteps = dbHelper.getTodayStepCount()
                     initialStepCount = totalStepsSinceBoot - savedSteps
                     isFirstReading = false
+                    
+                    // DEBUG: Show baseline calculation
+                    Toast.makeText(requireContext(), "Baseline set: $initialStepCount (saved: $savedSteps)", Toast.LENGTH_SHORT).show()
                 }
                 
                 val todaySteps = totalStepsSinceBoot - initialStepCount
@@ -214,6 +259,9 @@ class StepFragment : Fragment(), SensorEventListener {
                 // Save to database
                 val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                 dbHelper.saveStepCount(today, todaySteps)
+                
+                // DEBUG: Show today's steps
+                Toast.makeText(requireContext(), "Today's steps: $todaySteps", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,103 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp">
+    android:padding="24dp">
 
-    <!-- Title -->
-    <TextView
+    <!-- Profile Button (Top Right) -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/btnProfile"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_profile"
+        android:scaleType="centerCrop"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
+        app:strokeColor="@color/emerald_green"
+        app:strokeWidth="2dp"
+        app:tint="@color/emerald_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Content Container (Centered) -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Step Counter"
-        android:textColor="@color/text_primary"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="48dp" />
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Circular Step Display -->
-    <FrameLayout
-        android:layout_width="280dp"
-        android:layout_height="280dp"
-        android:layout_marginBottom="48dp">
-
-        <!-- Circular Progress Bar -->
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/circularProgress"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
-            android:layout_gravity="center"
-            android:progress="0"
-            app:indicatorColor="@color/emerald_green"
-            app:indicatorSize="280dp"
-            app:trackColor="@color/background_light"
-            app:trackThickness="20dp" />
-
-        <!-- Step Count in Center -->
-        <LinearLayout
+        <!-- Title -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:text="Step Counter"
+            android:textColor="@color/text_primary"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="48dp" />
 
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginBottom="16dp"
-                android:contentDescription="Steps icon"
-                android:src="@drawable/ic_activity"
-                app:tint="@color/emerald_green" />
+        <!-- Circular Step Display -->
+        <FrameLayout
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:layout_marginBottom="48dp">
 
-            <TextView
-                android:id="@+id/tvStepCount"
+            <!-- Circular Progress Bar -->
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/circularProgress"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:layout_gravity="center"
+                android:progress="0"
+                app:indicatorColor="@color/emerald_green"
+                app:indicatorSize="280dp"
+                app:trackColor="@color/background_light"
+                app:trackThickness="20dp" />
+
+            <!-- Step Count in Center -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="@color/emerald_green"
-                android:textSize="48sp"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="steps"
-                android:textColor="@color/text_secondary"
-                android:textSize="16sp" />
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginBottom="16dp"
+                    android:contentDescription="Steps icon"
+                    android:src="@drawable/ic_activity"
+                    app:tint="@color/emerald_green" />
 
-            <TextView
-                android:id="@+id/tvGoal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Goal: 10,000 steps"
-                android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tvStepCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/emerald_green"
+                    android:textSize="48sp"
+                    android:textStyle="bold" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="steps"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="16sp" />
 
-    </FrameLayout>
+                <TextView
+                    android:id="@+id/tvGoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Goal: 10,000 steps"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
 
-    <!-- Status Text -->
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Step tracking is OFF"
-        android:textColor="@color/text_secondary"
-        android:textSize="16sp"
-        android:layout_marginBottom="32dp" />
+            </LinearLayout>
 
-    <!-- ON/OFF Toggle Button -->
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/btnToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enable Step Tracking"
-        android:textSize="18sp"
-        android:textColor="@color/text_primary" />
+        </FrameLayout>
 
-</LinearLayout>
+        <!-- Status Text -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step tracking is OFF"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            android:layout_marginBottom="32dp" />
+
+        <!-- ON/OFF Toggle Button -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/btnToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Step Tracking"
+            android:textSize="18sp"
+            android:textColor="@color/text_primary" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

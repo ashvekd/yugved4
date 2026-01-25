@@ -23,6 +23,8 @@
     <color name="success">#2ECC70</color>
     <color name="warning">#F39C12</color>
     <color name="info">#3498DB</color>
+    <color name="orange">#F39C12</color>
+    <color name="red_primary">#E74C3C</color>
     
     <!-- System Colors -->
     <color name="black">#FF000000</color>
@@ -31,4 +33,9 @@
     
     <!-- UI Interaction Colors -->
     <color name="ripple_color">#20000000</color>
+    
+    <!-- Material 3 Colors -->
+    <color name="primary">#2ECC70</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F5F5F5</color>
 </resources>

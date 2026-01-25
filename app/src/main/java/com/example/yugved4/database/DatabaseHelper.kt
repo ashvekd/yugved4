@@ -16,7 +16,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "yugved.db"
-        private const val DATABASE_VERSION = 9  // Incremented for step counter tables
+        private const val DATABASE_VERSION = 10  // Incremented for firebase_uid column
         
         // Doctors table and columns
         private const val TABLE_DOCTORS = "doctors"
@@ -37,6 +37,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val COLUMN_ACTIVITY_LEVEL = "activity_level"
         private const val COLUMN_DIET_PREFERENCE = "diet_preference"
         private const val COLUMN_HEIGHT = "height"
+        private const val COLUMN_FIREBASE_UID = "firebase_uid"
         
         // Mental health content table and columns
         private const val TABLE_MENTAL_HEALTH = "mental_health_content"
@@ -127,7 +128,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 $COLUMN_GENDER TEXT,
                 $COLUMN_ACTIVITY_LEVEL TEXT,
                 $COLUMN_DIET_PREFERENCE TEXT,
-                $COLUMN_HEIGHT REAL
+                $COLUMN_HEIGHT REAL,
+                $COLUMN_FIREBASE_UID TEXT
             )
         """.trimIndent()
         
@@ -384,7 +386,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         activityLevel: String? = null,
         dietPreference: String? = null,
         height: Double? = null,
-        name: String? = null
+        name: String? = null,
+        firebaseUid: String? = null
     ): Long {
         val db = writableDatabase
         
@@ -400,6 +403,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(COLUMN_ACTIVITY_LEVEL, activityLevel)
             put(COLUMN_DIET_PREFERENCE, dietPreference)
             put(COLUMN_HEIGHT, height)
+            put(COLUMN_FIREBASE_UID, firebaseUid)
         }
         
         val id = db.insert(TABLE_USER_PROFILE, null, values)
@@ -430,6 +434,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val height = if (!cursor.isNull(cursor.getColumnIndexOrThrow(COLUMN_HEIGHT))) {
                     cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_HEIGHT))
                 } else null
+                val firebaseUid = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIREBASE_UID))
                 
                 profile = UserProfile(
                     id = id,
@@ -440,7 +445,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     gender = gender,
                     activityLevel = activityLevel,
                     dietPreference = dietPreference,
-                    height = height
+                    height = height,
+                    firebaseUid = firebaseUid
                 )
             }
         }
@@ -1757,5 +1763,84 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
             .format(java.util.Date())
         return getStepCount(today)
+    }
+    
+    // =============== FIREBASE & AUTHENTICATION METHODS ===============
+    
+    /**
+     * Get Firebase UID from user profile
+     * @return Firebase UID string or null if not found
+     */
+    fun getFirebaseUid(): String? {
+        val db = readableDatabase
+        var uid: String? = null
+        
+        db.rawQuery("SELECT $COLUMN_FIREBASE_UID FROM $TABLE_USER_PROFILE LIMIT 1", null).use { cursor ->
+            if (cursor.moveToFirst()) {
+                uid = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIREBASE_UID))
+            }
+        }
+        
+        db.close()
+        return uid
+    }
+    
+    /**
+     * Update Firebase UID in user profile
+     * @return number of rows affected
+     */
+    fun updateFirebaseUid(uid: String): Int {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_FIREBASE_UID, uid)
+        }
+        
+        val rowsAffected = db.update(TABLE_USER_PROFILE, values, null, null)
+        db.close()
+        return rowsAffected
+    }
+    
+    // =============== STEP GOAL METHODS ===============
+    
+    /**
+     * Save step goal to app settings
+     * @param goal Daily step goal
+     * @return row ID or -1 if error
+     */
+    fun saveStepGoal(goal: Int): Long {
+        val db = writableDatabase
+        
+        // Delete existing step goal
+        db.delete(TABLE_APP_SETTINGS, "$COLUMN_SETTING_KEY = ?", arrayOf("step_goal"))
+        
+        val values = ContentValues().apply {
+            put(COLUMN_SETTING_KEY, "step_goal")
+            put(COLUMN_SETTING_VALUE, goal)
+        }
+        
+        val id = db.insert(TABLE_APP_SETTINGS, null, values)
+        db.close()
+        return id
+    }
+    
+    /**
+     * Get step goal from app settings
+     * @return Step goal or default 10000 if not found
+     */
+    fun getStepGoal(): Int {
+        val db = readableDatabase
+        var goal = 10000 // Default goal
+        
+        db.rawQuery(
+            "SELECT $COLUMN_SETTING_VALUE FROM $TABLE_APP_SETTINGS WHERE $COLUMN_SETTING_KEY = ?",
+            arrayOf("step_goal")
+        ).use { cursor ->
+            if (cursor.moveToFirst()) {
+                goal = cursor.getInt(0)
+            }
+        }
+        
+        db.close()
+        return goal
     }
 }

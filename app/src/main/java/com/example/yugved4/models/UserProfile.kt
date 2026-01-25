@@ -12,5 +12,6 @@ data class UserProfile(
     val gender: String? = null,
     val activityLevel: String? = null,
     val dietPreference: String? = null,
-    val height: Double? = null
+    val height: Double? = null,
+    val firebaseUid: String? = null
 )

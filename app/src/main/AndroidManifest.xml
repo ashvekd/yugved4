@@ -7,6 +7,9 @@
     
     <!-- Permission for physical activity recognition (step counter) -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    
+    <!-- Permission for internet access (Firebase) -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".YugvedApplication"
@@ -19,15 +22,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Yugved4">
+        
+        <!-- LoginActivity - Entry Point -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Yugved4">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <!-- OnboardingActivity -->
+        <activity
+            android:name=".OnboardingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Yugved4" />
+        
+        <!-- MainActivity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
