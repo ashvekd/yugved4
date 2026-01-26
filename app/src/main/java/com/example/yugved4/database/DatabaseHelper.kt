@@ -21,7 +21,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
     companion object {
         private const val DATABASE_NAME = "yugved.db"
-        private const val DATABASE_VERSION = 11  // Incremented for daily_moods and peace_quotes tables
+        private const val DATABASE_VERSION = 12  // Incremented for video support
         
         // Doctors table and columns
         private const val TABLE_DOCTORS = "doctors"
@@ -72,6 +72,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         private const val COLUMN_EXERCISE_NAME = "exercise_name"
         private const val COLUMN_EXERCISE_DESCRIPTION = "exercise_description"
         private const val COLUMN_EXERCISE_THUMBNAIL = "thumbnail_resource"
+        private const val COLUMN_EXERCISE_VIDEO_URL = "video_url"
         
         // Yoga asanas table and columns
         private const val TABLE_YOGA_ASANAS = "yoga_asanas"
@@ -84,6 +85,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         private const val COLUMN_ASANA_DIFFICULTY = "difficulty_level"
         private const val COLUMN_ASANA_CATEGORY = "category"
         private const val COLUMN_ASANA_THUMBNAIL = "thumbnail_resource"
+        private const val COLUMN_ASANA_VIDEO_URL = "video_url"
         
         // Meal plans table and columns
         private const val TABLE_MEAL_PLANS = "meal_plans"
@@ -186,6 +188,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 $COLUMN_EXERCISE_NAME TEXT NOT NULL,
                 $COLUMN_EXERCISE_DESCRIPTION TEXT NOT NULL,
                 $COLUMN_EXERCISE_THUMBNAIL INTEGER NOT NULL,
+                $COLUMN_EXERCISE_VIDEO_URL TEXT,
                 FOREIGN KEY($COLUMN_EXERCISE_MUSCLE_ID) REFERENCES $TABLE_MUSCLE_GROUPS($COLUMN_MUSCLE_ID)
             )
         """.trimIndent()
@@ -214,7 +217,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 $COLUMN_ASANA_DURATION TEXT NOT NULL,
                 $COLUMN_ASANA_DIFFICULTY TEXT NOT NULL,
                 $COLUMN_ASANA_CATEGORY TEXT NOT NULL,
-                $COLUMN_ASANA_THUMBNAIL INTEGER NOT NULL
+                $COLUMN_ASANA_THUMBNAIL INTEGER NOT NULL,
+                $COLUMN_ASANA_VIDEO_URL TEXT
             )
         """.trimIndent()
         db.execSQL(createYogaAsanasTable)
@@ -1100,115 +1104,115 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         // ===== CHEST EXERCISES (muscle_id = 1) =====
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (1, 'Push-ups', 'Classic bodyweight chest exercise. Place hands shoulder-width apart, keep your body straight, and lower yourself until your chest nearly touches the ground. Push back up to starting position. Excellent for building upper body strength.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (1, 'Push-ups', 'Classic bodyweight chest exercise. Place hands shoulder-width apart, keep your body straight, and lower yourself until your chest nearly touches the ground. Push back up to starting position. Excellent for building upper body strength.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/chest/Push-ups.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (1, 'Bench Press', 'Lie flat on a bench with feet firmly on the floor. Grip the barbell slightly wider than shoulder-width. Lower the bar to your mid-chest in a controlled motion, then press it back up to the starting position. Keep your shoulder blades retracted and core engaged throughout.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (1, 'Bench Press', 'Lie flat on a bench with feet firmly on the floor. Grip the barbell slightly wider than shoulder-width. Lower the bar to your mid-chest in a controlled motion, then press it back up to the starting position. Keep your shoulder blades retracted and core engaged throughout.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/chest/Bench Press.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (1, 'Dumbbell Flyes', 'Lie on a bench holding dumbbells above your chest with palms facing each other. Lower the weights out to the sides in a wide arc with a slight bend in your elbows, feeling a stretch across your chest. Bring them back up in a hugging motion, squeezing your pecs at the top.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (1, 'Dumbbell Flyes', 'Lie on a bench holding dumbbells above your chest with palms facing each other. Lower the weights out to the sides in a wide arc with a slight bend in your elbows, feeling a stretch across your chest. Bring them back up in a hugging motion, squeezing your pecs at the top.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/chest/Chest fly.mp4')
         """)
         
         // ===== BACK EXERCISES (muscle_id = 2) =====
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (2, 'Lat Pulldowns', 'Sit at a lat pulldown machine and grip the bar wider than shoulder-width. Pull the bar down to your upper chest while keeping your torso upright. Squeeze your shoulder blades together at the bottom, then slowly return to the starting position. Focus on pulling with your lats, not your arms.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (2, 'Lat Pulldowns', 'Sit at a lat pulldown machine and grip the bar wider than shoulder-width. Pull the bar down to your upper chest while keeping your torso upright. Squeeze your shoulder blades together at the bottom, then slowly return to the starting position. Focus on pulling with your lats, not your arms.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/back/Lat Pulldowns.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (2, 'Seated Row', 'Sit at a cable row machine with feet on the platform and knees slightly bent. Pull the handle to your abdomen, keeping your back straight and squeezing your shoulder blades together. Slowly extend your arms back to the starting position while maintaining tension.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (2, 'Seated Row', 'Sit at a cable row machine with feet on the platform and knees slightly bent. Pull the handle to your abdomen, keeping your back straight and squeezing your shoulder blades together. Slowly extend your arms back to the starting position while maintaining tension.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/back/Seated Row.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (2, 'Deadlifts', 'Stand with feet hip-width apart, barbell over mid-foot. Bend at hips and knees to grip the bar with hands just outside your legs. Keep your back straight, chest up, and core tight. Lift by extending hips and knees simultaneously, keeping the bar close to your body. Lower with control.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (2, 'Deadlifts', 'Stand with feet hip-width apart, barbell over mid-foot. Bend at hips and knees to grip the bar with hands just outside your legs. Keep your back straight, chest up, and core tight. Lift by extending hips and knees simultaneously, keeping the bar close to your body. Lower with control.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/back/DeadLift.mp4')
         """)
         
         // ===== SHOULDERS EXERCISES (muscle_id = 3) =====
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (3, 'Overhead Press', 'Stand with feet shoulder-width apart, holding dumbbells or a barbell at shoulder height. Press the weight directly overhead until arms are fully extended, keeping your core engaged. Lower back to shoulder level with control. Avoid arching your lower back.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (3, 'Overhead Press', 'Stand with feet shoulder-width apart, holding dumbbells or a barbell at shoulder height. Press the weight directly overhead until arms are fully extended, keeping your core engaged. Lower back to shoulder level with control. Avoid arching your lower back.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/shoulders/Overhead Press.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (3, 'Lateral Raise', 'Stand holding dumbbells at your sides with palms facing inward. Raise the weights out to the sides with a slight bend in your elbows until arms are parallel to the floor. Focus on leading with your elbows. Lower slowly back to starting position, maintaining control.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (3, 'Lateral Raise', 'Stand holding dumbbells at your sides with palms facing inward. Raise the weights out to the sides with a slight bend in your elbows until arms are parallel to the floor. Focus on leading with your elbows. Lower slowly back to starting position, maintaining control.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/shoulders/Lateral Raise.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (3, 'Front Raises', 'Stand holding dumbbells in front of your thighs. Raise one or both weights forward and upward to shoulder height, keeping arms straight but not locked. Slowly lower back down and repeat. This targets the front deltoids.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (3, 'Front Raises', 'Stand holding dumbbells in front of your thighs. Raise one or both weights forward and upward to shoulder height, keeping arms straight but not locked. Slowly lower back down and repeat. This targets the front deltoids.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/shoulders/Front Raises.mp4')
         """)
         
         // ===== ARMS EXERCISES (muscle_id = 4) =====
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (4, 'Bicep Curls', 'Stand with dumbbells at your sides, palms facing forward. Curl the weights up towards your shoulders by bending at the elbows, keeping your upper arms stationary. Squeeze your biceps at the top, then slowly lower the weights back down. Avoid swinging or using momentum.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (4, 'Bicep Curls', 'Stand with dumbbells at your sides, palms facing forward. Curl the weights up towards your shoulders by bending at the elbows, keeping your upper arms stationary. Squeeze your biceps at the top, then slowly lower the weights back down. Avoid swinging or using momentum.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/arms/Bicep Curls.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (4, 'Tricep Pushdowns', 'Stand facing a cable machine with a rope or bar attachment set at upper chest height. Grip the attachment and push down until your arms are fully extended, keeping your elbows close to your sides. Squeeze your triceps at the bottom, then slowly return to the starting position.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (4, 'Tricep Pushdowns', 'Stand facing a cable machine with a rope or bar attachment set at upper chest height. Grip the attachment and push down until your arms are fully extended, keeping your elbows close to your sides. Squeeze your triceps at the bottom, then slowly return to the starting position.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/arms/Tricep Pushdowns.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (4, 'Hammer Curls', 'Stand with dumbbells at your sides, palms facing each other (neutral grip). Curl the weights towards your shoulders while maintaining the neutral grip throughout. This variation targets both biceps and forearms. Lower with control.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (4, 'Hammer Curls', 'Stand with dumbbells at your sides, palms facing each other (neutral grip). Curl the weights towards your shoulders while maintaining the neutral grip throughout. This variation targets both biceps and forearms. Lower with control.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/arms/Hammer Curls.mp4')
         """)
         
         // ===== LEGS EXERCISES (muscle_id = 5) =====
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (5, 'Squats', 'Stand with feet shoulder-width apart, toes slightly pointed out. Lower your hips as if sitting back into a chair, keeping your chest up and weight on your heels. Descend until thighs are parallel to the ground. Drive through your heels to return to standing.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (5, 'Squats', 'Stand with feet shoulder-width apart, toes slightly pointed out. Lower your hips as if sitting back into a chair, keeping your chest up and weight on your heels. Descend until thighs are parallel to the ground. Drive through your heels to return to standing.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/legs/Squats.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (5, 'Leg Press', 'Sit in a leg press machine with feet shoulder-width apart on the platform. Release the safety handles and lower the platform by bending your knees until they reach 90 degrees. Push through your heels to extend your legs back to the starting position. Keep your back flat against the seat.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (5, 'Leg Press', 'Sit in a leg press machine with feet shoulder-width apart on the platform. Release the safety handles and lower the platform by bending your knees until they reach 90 degrees. Push through your heels to extend your legs back to the starting position. Keep your back flat against the seat.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/legs/Leg Press.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (5, 'Lunges', 'Stand with feet hip-width apart. Step forward with one leg and lower your hips until both knees are bent at approximately 90 degrees. The back knee should nearly touch the ground. Push back to the starting position through your front heel and alternate legs.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (5, 'Lunges', 'Stand with feet hip-width apart. Step forward with one leg and lower your hips until both knees are bent at approximately 90 degrees. The back knee should nearly touch the ground. Push back to the starting position through your front heel and alternate legs.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/legs/Lunges.mp4')
         """)
         
         // ===== CORE EXERCISES (muscle_id = 6) =====
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (6, 'Planks', 'Start in a push-up position with forearms on the ground, elbows directly under shoulders. Keep your body in a straight line from head to heels, engaging your core, glutes, and quads. Hold this position without letting your hips sag or pike up. Breathe steadily.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (6, 'Planks', 'Start in a push-up position with forearms on the ground, elbows directly under shoulders. Keep your body in a straight line from head to heels, engaging your core, glutes, and quads. Hold this position without letting your hips sag or pike up. Breathe steadily.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/core/Plank mp4.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (6, 'Crunches', 'Lie on your back with knees bent and feet flat on the floor. Place hands behind your head or across your chest. Lift your shoulder blades off the ground by contracting your abs, bringing your ribs toward your hips. Lower back down with control without fully relaxing.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (6, 'Crunches', 'Lie on your back with knees bent and feet flat on the floor. Place hands behind your head or across your chest. Lift your shoulder blades off the ground by contracting your abs, bringing your ribs toward your hips. Lower back down with control without fully relaxing.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/core/Crunches.mp4')
         """)
         
         db.execSQL("""
             INSERT INTO $TABLE_GYM_EXERCISES 
-            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL) 
-            VALUES (6, 'Russian Twists', 'Sit on the floor with knees bent and feet lifted. Lean back slightly to engage your core. Hold your hands together or hold a weight. Rotate your torso from side to side, touching the ground beside your hip with each twist. Keep your core tight throughout.', $thumbnailPlaceholder)
+            ($COLUMN_EXERCISE_MUSCLE_ID, $COLUMN_EXERCISE_NAME, $COLUMN_EXERCISE_DESCRIPTION, $COLUMN_EXERCISE_THUMBNAIL, $COLUMN_EXERCISE_VIDEO_URL) 
+            VALUES (6, 'Russian Twists', 'Sit on the floor with knees bent and feet lifted. Lean back slightly to engage your core. Hold your hands together or hold a weight. Rotate your torso from side to side, touching the ground beside your hip with each twist. Keep your core tight throughout.', $thumbnailPlaceholder, 'file:///android_asset/videos/gym/core/Russian Twists.mp4')
         """)
     }
     
@@ -1646,6 +1650,9 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                     val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_NAME))
                     val description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_DESCRIPTION))
                     val thumbnail = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_THUMBNAIL))
+                    val videoUrl = if (cursor.getColumnIndex(COLUMN_EXERCISE_VIDEO_URL) != -1) {
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_VIDEO_URL))
+                    } else null
                     
                     exerciseList.add(
                         GymExercise(
@@ -1653,7 +1660,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                             muscleId = exerciseMuscleId,
                             name = name,
                             description = description,
-                            thumbnailResource = thumbnail
+                            thumbnailResource = thumbnail,
+                            videoUrl = videoUrl
                         )
                     )
                 } while (cursor.moveToNext())
@@ -1682,13 +1690,17 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_NAME))
                 val description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_DESCRIPTION))
                 val thumbnail = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_THUMBNAIL))
+                val videoUrl = if (cursor.getColumnIndex(COLUMN_EXERCISE_VIDEO_URL) != -1) {
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXERCISE_VIDEO_URL))
+                } else null
                 
                 exercise = GymExercise(
                     id = id,
                     muscleId = muscleId,
                     name = name,
                     description = description,
-                    thumbnailResource = thumbnail
+                    thumbnailResource = thumbnail,
+                    videoUrl = videoUrl
                 )
             }
         }
@@ -1712,7 +1724,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val duration: String,
         val difficultyLevel: String,
         val category: String,
-        val thumbnailResource: Int
+        val thumbnailResource: Int,
+        val videoUrl: String? = null
     )
     
     /**
@@ -1736,9 +1749,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                     val difficultyLevel = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_DIFFICULTY))
                     val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_CATEGORY))
                     val thumbnailResource = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ASANA_THUMBNAIL))
+                    val videoUrl = if (cursor.getColumnIndex(COLUMN_ASANA_VIDEO_URL) != -1 && !cursor.isNull(cursor.getColumnIndex(COLUMN_ASANA_VIDEO_URL))) {
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_VIDEO_URL))
+                    } else null
                     
                     asanaList.add(
-                        YogaAsana(id, name, sanskritName, description, benefits, duration, difficultyLevel, category, thumbnailResource)
+                        YogaAsana(id, name, sanskritName, description, benefits, duration, difficultyLevel, category, thumbnailResource, videoUrl)
                     )
                 } while (cursor.moveToNext())
             }
@@ -1773,9 +1789,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                     val difficultyLevel = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_DIFFICULTY))
                     val categoryValue = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_CATEGORY))
                     val thumbnailResource = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ASANA_THUMBNAIL))
+                    val videoUrl = if (cursor.getColumnIndex(COLUMN_ASANA_VIDEO_URL) != -1 && !cursor.isNull(cursor.getColumnIndex(COLUMN_ASANA_VIDEO_URL))) {
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_VIDEO_URL))
+                    } else null
                     
                     asanaList.add(
-                        YogaAsana(id, name, sanskritName, description, benefits, duration, difficultyLevel, categoryValue, thumbnailResource)
+                        YogaAsana(id, name, sanskritName, description, benefits, duration, difficultyLevel, categoryValue, thumbnailResource, videoUrl)
                     )
                 } while (cursor.moveToNext())
             }
@@ -1809,8 +1828,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 val difficultyLevel = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_DIFFICULTY))
                 val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_CATEGORY))
                 val thumbnailResource = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ASANA_THUMBNAIL))
+                val videoUrl = if (cursor.getColumnIndex(COLUMN_ASANA_VIDEO_URL) != -1 && !cursor.isNull(cursor.getColumnIndex(COLUMN_ASANA_VIDEO_URL))) {
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ASANA_VIDEO_URL))
+                } else null
                 
-                asana = YogaAsana(id, name, sanskritName, description, benefits, duration, difficultyLevel, category, thumbnailResource)
+                asana = YogaAsana(id, name, sanskritName, description, benefits, duration, difficultyLevel, category, thumbnailResource, videoUrl)
             }
         }
         
@@ -1920,7 +1942,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val muscleId: Int,
         val name: String,
         val description: String,
-        val thumbnailResource: Int
+        val thumbnailResource: Int,
+        val videoUrl: String? = null
     )
     
     // =====================================================

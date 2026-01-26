@@ -10,32 +10,44 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Video Placeholder -->
         <FrameLayout
-            android:id="@+id/videoPlaceholder"
+            android:id="@+id/videoContainer"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:background="?attr/colorSurfaceVariant">
 
-            <!-- TODO: Replace with VideoView/ExoPlayer when video files are provided -->
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+
             <ImageView
+                android:id="@+id/btnPlayVideo"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_play_circle"
-                android:contentDescription="Video placeholder"
+                android:contentDescription="Play Video"
                 app:tint="@android:color/white"
-                android:alpha="0.7" />
+                android:visibility="gone" />
 
-            <TextView
+            <ProgressBar
+                android:id="@+id/videoLoadingProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="80dp"
-                android:text="Video Coming Soon"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvVideoError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Video Not Available"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
-                android:alpha="0.7" />
+                android:visibility="gone" />
 
         </FrameLayout>
 

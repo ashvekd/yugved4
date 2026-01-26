@@ -20,26 +20,53 @@
             app:cardElevation="2dp">
 
             <FrameLayout
+                android:id="@+id/videoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!-- Video Placeholder Background -->
+                <VideoView
+                    android:id="@+id/videoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center" />
+
+                <!-- Video Placeholder Background (shown when video is loading/error) -->
                 <ImageView
+                    android:id="@+id/imgPlaceholder"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/placeholder_video"
                     android:contentDescription="@string/video_placeholder"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
 
-                <!-- Video Coming Soon Text -->
+                <ImageView
+                    android:id="@+id/btnPlayVideo"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_play_circle"
+                    android:contentDescription="Play Video"
+                    app:tint="@android:color/white"
+                    android:visibility="gone" />
+
+                <ProgressBar
+                    android:id="@+id/videoLoadingProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
                 <TextView
+                    android:id="@+id/tvVideoError"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="60dp"
                     android:text="@string/video_coming_soon"
                     android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="gone" />
 
             </FrameLayout>
 

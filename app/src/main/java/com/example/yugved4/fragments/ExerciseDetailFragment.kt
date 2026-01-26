@@ -1,5 +1,7 @@
 package com.example.yugved4.fragments
 
+import java.io.File
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,8 +55,93 @@ class ExerciseDetailFragment : Fragment() {
             // Display exercise description
             binding.tvExerciseDescription.text = it.description
 
-            // TODO: Replace with VideoView/ExoPlayer when video files are provided
-            // The video placeholder is already set in the XML layout
+            // Setup Video Player
+            setupVideoPlayer(it.videoUrl)
+        }
+    }
+
+    private fun setupVideoPlayer(videoUrl: String?) {
+        if (videoUrl.isNullOrEmpty()) {
+            binding.tvVideoError.text = "No video available"
+            binding.tvVideoError.visibility = View.VISIBLE
+            binding.videoLoadingProgress.visibility = View.GONE
+            return
+        }
+
+        binding.videoLoadingProgress.visibility = View.VISIBLE
+        binding.btnPlayVideo.visibility = View.GONE
+        
+        try {
+            val validUrl = if (videoUrl.startsWith("file:///android_asset/")) {
+                // Copy asset to cache file because VideoView cannot play assets directly
+                val assetPath = videoUrl.removePrefix("file:///android_asset/")
+                val file = File(requireContext().cacheDir, File(assetPath).name)
+                
+                if (!file.exists()) {
+                    try {
+                        requireContext().assets.open(assetPath).use { inputStream ->
+                            java.io.FileOutputStream(file).use { outputStream ->
+                                inputStream.copyTo(outputStream)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        binding.tvVideoError.visibility = View.VISIBLE
+                        binding.tvVideoError.text = "Error loading video"
+                        binding.videoLoadingProgress.visibility = View.GONE
+                        return
+                    }
+                }
+                file.absolutePath
+            } else {
+                videoUrl
+            }
+
+            binding.videoView.setVideoPath(validUrl)
+            
+            // Loop video
+            binding.videoView.setOnPreparedListener { mp ->
+                mp.isLooping = true
+                binding.videoLoadingProgress.visibility = View.GONE
+                binding.btnPlayVideo.visibility = View.GONE
+                // Auto play
+                binding.videoView.start() 
+            }
+            
+            binding.videoView.setOnErrorListener { _, _, _ ->
+                binding.videoLoadingProgress.visibility = View.GONE
+                binding.tvVideoError.visibility = View.VISIBLE
+                binding.tvVideoError.text = "Error playing video"
+                true
+            }
+            
+            // Play/Pause on click
+            binding.videoContainer.setOnClickListener {
+                if (binding.videoView.isPlaying) {
+                    binding.videoView.pause()
+                    binding.btnPlayVideo.visibility = View.VISIBLE
+                } else {
+                    binding.videoView.start()
+                    binding.btnPlayVideo.visibility = View.GONE
+                }
+            }
+            
+            binding.btnPlayVideo.setOnClickListener {
+                binding.videoView.start()
+                binding.btnPlayVideo.visibility = View.GONE
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            binding.tvVideoError.visibility = View.VISIBLE
+            binding.videoLoadingProgress.visibility = View.GONE
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (binding.videoView.isPlaying) {
+            binding.videoView.pause()
         }
     }
 
